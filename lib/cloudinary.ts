@@ -1,6 +1,3 @@
-"use client";
-
-
 export async function uploadImageToCloudinary(file: File, folder = "baobab-hotel"): Promise<string> {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -29,4 +26,9 @@ export async function uploadImageToCloudinary(file: File, folder = "baobab-hotel
 export function cloudinaryUrl(publicId: string, transform = "w_600,h_450,c_fill,q_auto,f_auto") {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   return `https://res.cloudinary.com/${cloudName}/image/upload/${transform}/${publicId}`;
+}
+
+export function cloudinaryRawUrl(publicId: string) {
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  return `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}`;
 }
