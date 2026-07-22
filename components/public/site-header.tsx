@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import { getDefaultRouteForRole } from "@/lib/auth-routes";
 import type { AppUser } from "@/server/auth/config";
@@ -61,12 +62,16 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
               </Link>
             );
           })}
+          <ThemeToggle />
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
           {user ? (
-            <Link href={getDefaultRouteForRole(user.role)} className={buttonVariants({ size: "sm" })}>
-              {user.role === "guest" ? "My Account" : "Dashboard"}
+            <Link
+              href={user.role === "guest" ? "/bookings" : getDefaultRouteForRole(user.role)}
+              className={buttonVariants({ size: "sm" })}
+            >
+              {user.role === "guest" ? "My Bookings" : "Dashboard"}
             </Link>
           ) : (
             <>
@@ -120,11 +125,11 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
             <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
               {user ? (
                 <Link
-                  href={getDefaultRouteForRole(user.role)}
+                  href={user.role === "guest" ? "/bookings" : getDefaultRouteForRole(user.role)}
                   onClick={() => setMobileOpen(false)}
                   className={buttonVariants({ className: "w-full" })}
                 >
-                  {user.role === "guest" ? "My Account" : "Dashboard"}
+                  {user.role === "guest" ? "My Bookings" : "Dashboard"}
                 </Link>
               ) : (
                 <>
@@ -135,6 +140,7 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
                   >
                     Sign In
                   </Link>
+                  <ThemeToggle />
                   <Link
                     href="/rooms"
                     onClick={() => setMobileOpen(false)}
