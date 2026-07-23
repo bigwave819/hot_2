@@ -1,5 +1,5 @@
 import "server-only";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 import { db } from "@/server/db";
 import { reservations } from "@/server/schema";
 
@@ -19,3 +19,12 @@ export async function getReservationById(id: string) {
   });
 }
 export type ReservationDetail = Awaited<ReturnType<typeof getReservationById>>;
+
+
+export async function listAllReservationsForStaff() {
+  return db.query.reservations.findMany({
+    with: { guest: true, room: { with: { roomType: true } } },
+    orderBy: asc(reservations.checkInDate),
+  });
+}
+export type StaffReservationRow = Awaited<ReturnType<typeof listAllReservationsForStaff>>[number];

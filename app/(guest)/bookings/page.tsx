@@ -9,23 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { buttonVariants } from "@/components/ui/button";
 import { Reveal } from "@/components/public/reveal";
+import { RESERVATION_STATUS_LABEL, RESERVATION_STATUS_VARIANT } from "@/lib/reservation-status";
 
 export const metadata: Metadata = { title: "My Bookings" };
-
-const STATUS_VARIANT: Record<string, "default" | "success" | "warning" | "destructive" | "info"> = {
-  pending: "warning",
-  confirmed: "success",
-  checked_in: "info",
-  checked_out: "default",
-  cancelled: "destructive",
-};
-const STATUS_LABEL: Record<string, string> = {
-  pending: "Pending Confirmation",
-  confirmed: "Confirmed",
-  checked_in: "Checked In",
-  checked_out: "Checked Out",
-  cancelled: "Cancelled",
-};
 
 export default async function BookingsPage() {
   const user = await requireUser();
@@ -72,7 +58,7 @@ export default async function BookingsPage() {
                 <div className="flex flex-1 flex-col justify-center">
                   <div className="flex items-start justify-between gap-2">
                     <h2 className="font-display text-lg font-medium text-foreground">{r.room.roomType.name}</h2>
-                    <Badge variant={STATUS_VARIANT[r.status]}>{STATUS_LABEL[r.status]}</Badge>
+                    <Badge variant={RESERVATION_STATUS_VARIANT[r.status]}>{RESERVATION_STATUS_LABEL[r.status]}</Badge>
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {format(new Date(r.checkInDate), "MMM d")} → {format(new Date(r.checkOutDate), "MMM d, yyyy")}

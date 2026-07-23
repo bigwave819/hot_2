@@ -62,10 +62,10 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
               </Link>
             );
           })}
-          <ThemeToggle />
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          <ThemeToggle />
           {user ? (
             <Link
               href={user.role === "guest" ? "/bookings" : getDefaultRouteForRole(user.role)}
@@ -85,14 +85,17 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setMobileOpen(true)}
-          aria-label="Open menu"
-          className="rounded-md p-2 text-foreground md:hidden"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open menu"
+            className="rounded-md p-2 text-foreground"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       {mobileOpen && (
@@ -140,7 +143,6 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
                   >
                     Sign In
                   </Link>
-                  <ThemeToggle />
                   <Link
                     href="/rooms"
                     onClick={() => setMobileOpen(false)}

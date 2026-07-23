@@ -10,9 +10,6 @@ export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
-  // next-themes reads the persisted theme only after mount — rendering an
-  // icon before that risks a server/client mismatch, so show an inert
-  // placeholder of the same size until it's safe.
   React.useEffect(() => setMounted(true), []);
 
   if (!mounted) {

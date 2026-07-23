@@ -1,0 +1,1 @@
+ALTER TABLE "guest_profiles" DROP COLUMN "id_number";

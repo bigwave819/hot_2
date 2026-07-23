@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { getNavForRole } from "@/lib/dashboard-nav";
 import { RoleBadge } from "@/components/dashboard/role-badge";
 import { SignOutButton } from "@/components/dashboard/sign-out-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import type { AppUser } from "@/server/auth/config";
 
@@ -51,6 +52,7 @@ export function DashboardShell({ user, children }: { user: AppUser; children: Re
 
   return (
     <div className="min-h-screen bg-secondary/40">
+      {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-border bg-card lg:flex">
         <Link href="/dashboard" className="font-display px-6 py-6 text-xl font-medium">
           Baobab Hotel
@@ -61,11 +63,15 @@ export function DashboardShell({ user, children }: { user: AppUser; children: Re
           <p className="truncate text-xs text-muted-foreground">{user.email}</p>
           <div className="mt-2 flex items-center justify-between">
             <RoleBadge role={user.role} />
-            <SignOutButton />
+            <div className="flex items-center">
+              <ThemeToggle />
+              <SignOutButton />
+            </div>
           </div>
         </div>
       </aside>
 
+      {/* Mobile drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div
@@ -91,13 +97,17 @@ export function DashboardShell({ user, children }: { user: AppUser; children: Re
               <p className="truncate text-xs text-muted-foreground">{user.email}</p>
               <div className="mt-2 flex items-center justify-between">
                 <RoleBadge role={user.role} />
-                <SignOutButton />
+                <div className="flex items-center">
+                  <ThemeToggle />
+                  <SignOutButton />
+                </div>
               </div>
             </div>
           </aside>
         </div>
       )}
 
+      {/* Content column */}
       <div className="lg:pl-64">
         <header className="sticky top-0 z-30 flex items-center gap-4 border-b border-border bg-card px-4 py-3 lg:hidden">
           <button
