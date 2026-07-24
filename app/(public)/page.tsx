@@ -60,7 +60,7 @@ export default async function HomePage() {
       {/* Hero */}
       <section className="relative flex h-[85vh] min-h-140 items-end overflow-hidden">
         <Image
-          src="/images/homepage-hero.jpg"
+          src="/homepage-hero.jpg"
           alt="Baobab Hotel exterior at dusk"
           fill
           priority

@@ -7,11 +7,16 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { DataTable, type DataTableColumn } from "@/components/shared/data-table";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { CancelDialog } from "./cancel-dialog";
+import { RecordPaymentDialog } from "./record-payment-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { confirmReservation, checkInReservation, checkOutReservation } from "@/server/actions/reservations";
 import { RESERVATION_STATUS_LABEL, RESERVATION_STATUS_VARIANT, type ReservationStatus } from "@/lib/reservation-status";
 import type { StaffReservationRow } from "@/server/db/queries/reservations";
+
+function nightsBetween(checkIn: string, checkOut: string) {
+  return Math.max(1, Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86_400_000));
+}
 
 const TABS: { value: ReservationStatus | "all"; label: string }[] = [
   { value: "all", label: "All" },
@@ -24,10 +29,17 @@ const TABS: { value: ReservationStatus | "all"; label: string }[] = [
 
 type PendingAction = { type: "confirm" | "check_in" | "check_out"; reservation: StaffReservationRow };
 
-export function ReservationsManager({ reservations }: { reservations: StaffReservationRow[] }) {
+export function ReservationsManager({
+  reservations,
+  currency,
+}: {
+  reservations: StaffReservationRow[];
+  currency: string;
+}) {
   const router = useRouter();
   const [pending, setPending] = React.useState<PendingAction | null>(null);
   const [cancelling, setCancelling] = React.useState<StaffReservationRow | null>(null);
+  const [recordingPaymentFor, setRecordingPaymentFor] = React.useState<StaffReservationRow | null>(null);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -110,15 +122,23 @@ export function ReservationsManager({ reservations }: { reservations: StaffReser
               <Button size="sm" onClick={() => setPending({ type: "check_in", reservation: r })}>
                 Check In
               </Button>
+              <Button size="sm" variant="outline" onClick={() => setRecordingPaymentFor(r)}>
+                Record Payment
+              </Button>
               <Button size="sm" variant="outline" onClick={() => setCancelling(r)}>
                 Cancel
               </Button>
             </>
           )}
           {r.status === "checked_in" && (
-            <Button size="sm" onClick={() => setPending({ type: "check_out", reservation: r })}>
-              Check Out
-            </Button>
+            <>
+              <Button size="sm" onClick={() => setPending({ type: "check_out", reservation: r })}>
+                Check Out
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setRecordingPaymentFor(r)}>
+                Record Payment
+              </Button>
+            </>
           )}
         </div>
       ),
@@ -127,12 +147,6 @@ export function ReservationsManager({ reservations }: { reservations: StaffReser
 
   return (
     <div className="flex flex-col gap-4">
-      {error && (
-        <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {error}
-        </p>
-      )}
-
       <Tabs defaultValue="all">
         <TabsList>
           {TABS.map((tab) => {
@@ -185,6 +199,7 @@ export function ReservationsManager({ reservations }: { reservations: StaffReser
           }
           onConfirm={handleConfirmAction}
           isConfirming={isConfirming}
+          error={error}
         />
       )}
 
@@ -197,6 +212,20 @@ export function ReservationsManager({ reservations }: { reservations: StaffReser
             setCancelling(null);
             router.refresh();
           }}
+        />
+      )}
+
+      {recordingPaymentFor && (
+        <RecordPaymentDialog
+          open={!!recordingPaymentFor}
+          onOpenChange={(open) => !open && setRecordingPaymentFor(null)}
+          reservationId={recordingPaymentFor.id}
+          guestName={recordingPaymentFor.guest.name}
+          currency={currency}
+          amountDue={
+            nightsBetween(recordingPaymentFor.checkInDate, recordingPaymentFor.checkOutDate) *
+            Number(recordingPaymentFor.ratePerNight)
+          }
         />
       )}
     </div>

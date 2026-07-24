@@ -11,6 +11,7 @@ export function ConfirmDialog({
   variant = "default",
   onConfirm,
   isConfirming = false,
+  error = null,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -20,6 +21,7 @@ export function ConfirmDialog({
   variant?: "default" | "destructive";
   onConfirm: () => void;
   isConfirming?: boolean;
+  error?: string | null;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -28,6 +30,11 @@ export function ConfirmDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
+        {error && (
+          <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            {error}
+          </p>
+        )}
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isConfirming}>
             Cancel
