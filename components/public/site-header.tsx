@@ -19,6 +19,16 @@ const NAV_LINKS = [
   { label: "Contact", href: "/contact" },
 ];
 
+/**
+ * Shared underline-draw-on-hover treatment for nav links: a 1px gold rule
+ * that scales in from the left on hover/focus, permanently visible on the
+ * active route. CSS-only (no JS), tied to the same duration/ease tokens
+ * the GSAP-driven parts of the site use, so it reads as one motion
+ * language rather than a separate hover convention.
+ */
+const navLinkUnderline =
+  "relative pb-0.5 after:absolute after:inset-x-0 after:-bottom-px after:h-px after:origin-left after:bg-gold after:transition-transform after:duration-(--duration-hover) after:ease-(--ease-signature)";
+
 export function SiteHeader({ user }: { user: AppUser | null }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -36,12 +46,12 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full border-b transition-colors",
+        "sticky top-0 z-40 w-full border-b transition-colors duration-(--duration-hover) ease-(--ease-signature-in-out)",
         scrolled ? "border-border bg-background/95 backdrop-blur-sm" : "border-transparent bg-background",
       )}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="font-display text-xl font-medium text-foreground">
+        <Link href="/" className="font-display text-xl font-medium tracking-tight text-foreground">
           Baobab Hotel
         </Link>
 
@@ -56,6 +66,8 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
                 className={cn(
                   "text-sm font-medium transition-colors",
                   active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                  navLinkUnderline,
+                  active ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100",
                 )}
               >
                 {link.label}
@@ -75,7 +87,7 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
             </Link>
           ) : (
             <>
-              <Link href="/login" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+              <Link href="/login" className={buttonVariants({ variant: "hairline", size: "sm" })}>
                 Sign In
               </Link>
               <Link href="/rooms" className={buttonVariants({ size: "sm" })}>
@@ -103,7 +115,7 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
           <div className="absolute inset-0 bg-black/50" aria-hidden="true" onClick={() => setMobileOpen(false)} />
           <div className="relative ml-auto flex h-full w-72 flex-col gap-1 bg-card p-6">
             <div className="mb-6 flex items-center justify-between">
-              <span className="font-display text-lg font-medium">Baobab Hotel</span>
+              <span className="font-display text-lg font-medium tracking-tight">Baobab Hotel</span>
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
@@ -139,7 +151,7 @@ export function SiteHeader({ user }: { user: AppUser | null }) {
                   <Link
                     href="/login"
                     onClick={() => setMobileOpen(false)}
-                    className={buttonVariants({ variant: "outline", className: "w-full" })}
+                    className={buttonVariants({ variant: "hairline", className: "w-full" })}
                   >
                     Sign In
                   </Link>

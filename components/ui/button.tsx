@@ -18,6 +18,16 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+        /**
+         * Public-site-only editorial CTA: thin gold hairline border, no
+         * fill, minimal radius — the "architectural" shape language from
+         * the luxury redesign brief, additive so the dashboard (default/
+         * outline/secondary/ghost/destructive/link) is unaffected. Use for
+         * secondary CTAs on the public site (e.g. "Explore the Menu")
+         * where the filled `default` variant would be too heavy.
+         */
+        hairline:
+          "rounded-none border-hairline bg-transparent text-foreground hover:border-hairline-strong hover:bg-gold/5",
       },
       size: {
         default:

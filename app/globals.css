@@ -8,10 +8,21 @@
    rather than a generic luxury cream+terracotta template. Signature accent
    (clay) is used sparingly — dividers, small highlights, a future
    Imigongo-pattern motif on the public site — never as a dominant color.
+
+   Dark mode ("evening at the hotel"): warmed near-black rather than an
+   inverted/desaturated flip of the light palette — see the .dark block.
    ========================================================================== */
 
 :root {
   --radius: 0.75rem;
+
+  /* Architectural shape language — public-site-only radii. Structural
+     containers (room cards, gallery tiles, dining cards) use these instead
+     of --radius/--radius-lg, which stay untouched for the shared/dashboard
+     primitives. Pill/full rounding is reserved for genuinely circular
+     elements (icon buttons, avatars) and is NOT represented here. */
+  --radius-public: 2px;
+  --radius-public-lg: 3px;
 
   /* Surfaces */
   --color-canvas: #faf7f0;
@@ -38,6 +49,13 @@
   --color-line: #dcd7c8;
   --color-mist: #e4e0d2;
 
+  /* Signature hairline — a single thin accent-colored rule, used in place
+     of shadow+radius as the primary "this is a card" signal on the public
+     site (see --radius-public above). Deliberately low-opacity so it reads
+     as a considered detail, not another bordered box. */
+  --color-hairline: color-mix(in oklch, var(--color-gold) 45%, transparent);
+  --color-hairline-strong: color-mix(in oklch, var(--color-gold) 80%, transparent);
+
   /* Semantic — shared across booking / room-status / payment states */
   --color-success: #3f7d4f;
   --color-success-foreground: #faf7f0;
@@ -62,6 +80,18 @@
   --color-emerald-hover: #24916d;
   --color-emerald-foreground: #f4f1e6;
 
+  /* Motion tokens — shared reference so CSS-driven hover states (button
+     micro-interactions, image-zoom on hover, underline draw-on) feel like
+     part of the same system as the GSAP-driven scroll choreography, rather
+     than two unrelated motion languages. GSAP tweens use the equivalent
+     named eases directly (see components/public/motion.ts); these CSS
+     vars exist for the plain-CSS transitions (:hover, group-hover) that
+     don't need JS. */
+  --ease-signature: cubic-bezier(0.16, 1, 0.3, 1); /* mirrors GSAP power3.out */
+  --ease-signature-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* mirrors GSAP power2.inOut */
+  --duration-hover: 500ms;
+  --duration-hover-slow: 900ms;
+
   /* shadcn/ui primitive mapping */
   --background: var(--color-canvas);
   --foreground: var(--color-ink);
@@ -85,34 +115,48 @@
 }
 
 .dark {
-  --color-canvas: #14170f;
-  --color-canvas-raised: #1b1f16;
-  --color-canvas-sunken: #202417;
+  /* Warm near-black rather than a desaturated inversion. Previous values
+     leaned dark olive-green (canvas #14170f reading flat/muddy per brief).
+     New values shift the base toward a warm bark/umber black — closer to
+     the --color-abyss family already used for auth screens — so light and
+     dark mode on the public site feel like one deliberate design language
+     instead of "light mode" and "light mode, inverted." */
+  --color-canvas: #15130f;
+  --color-canvas-raised: #1e1b15;
+  --color-canvas-sunken: #221e17;
 
-  --color-ink: #ece7d8;
-  --color-ink-muted: #a8ac9a;
-  --color-ink-faint: #767a68;
+  --color-ink: #f1ead9;
+  --color-ink-muted: #b3a890;
+  --color-ink-faint: #7d745f;
 
-  --color-forest: #6fa787;
-  --color-forest-hover: #86bc9b;
-  --color-forest-foreground: #14170f;
+  /* Forest lightened and warmed slightly for contrast/legibility against
+     the new warm-black base; still reads as "forest," not mint. */
+  --color-forest: #7fb08f;
+  --color-forest-hover: #97c2a4;
+  --color-forest-foreground: #15130f;
 
-  --color-clay: #c97a4c;
-  --color-clay-foreground: #14170f;
-  --color-gold: #d3b57b;
-  --color-gold-foreground: #14170f;
+  /* Gold and clay pushed richer/more luminous — evening mode should make
+     these feel like they're catching lamplight, not just "lighter for
+     contrast." */
+  --color-clay: #d1875a;
+  --color-clay-foreground: #15130f;
+  --color-gold: #dcbc84;
+  --color-gold-foreground: #15130f;
 
-  --color-line: #333726;
-  --color-mist: #2a2f22;
+  --color-line: #37301f;
+  --color-mist: #2b2519;
+
+  --color-hairline: color-mix(in oklch, var(--color-gold) 55%, transparent);
+  --color-hairline-strong: color-mix(in oklch, var(--color-gold) 85%, transparent);
 
   --color-success: #5da072;
-  --color-success-foreground: #14170f;
+  --color-success-foreground: #15130f;
   --color-warning: #d3a24f;
-  --color-warning-foreground: #14170f;
+  --color-warning-foreground: #15130f;
   --color-destructive: #d0685a;
-  --color-destructive-foreground: #14170f;
+  --color-destructive-foreground: #15130f;
   --color-info: #6fa1c2;
-  --color-info-foreground: #14170f;
+  --color-info-foreground: #15130f;
 
   --background: var(--color-canvas);
   --foreground: var(--color-ink);
@@ -165,6 +209,8 @@
   --color-forest-hover: var(--color-forest-hover);
   --color-line: var(--color-line);
   --color-mist: var(--color-mist);
+  --color-hairline: var(--color-hairline);
+  --color-hairline-strong: var(--color-hairline-strong);
   --color-success: var(--color-success);
   --color-success-foreground: var(--color-success-foreground);
   --color-warning: var(--color-warning);
@@ -189,6 +235,10 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* architectural public-site radii, exposed as e.g. rounded-public */
+  --radius-public: var(--radius-public);
+  --radius-public-lg: var(--radius-public-lg);
 }
 
 @layer base {
